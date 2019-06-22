@@ -17,9 +17,16 @@ class TennisGame1 {
         return this.players.find(player => player.name === playerName)
     }
 
+    getAdvantage() {
+        if (this.player1.points > this.player2.points) {
+            return [this.player1, (this.player1.points - this.player2.points)]
+        } else {
+            return [this.player2, (this.player2.points - this.player1.points)]
+        }
+    }
+
     getScore() {
         var score = "";
-        var tempScore = 0;
 
         if (this.player1.points === this.player2.points) {
             const equalScores = ['Love-All', 'Fifteen-All', 'Thirty-All']
@@ -28,27 +35,15 @@ class TennisGame1 {
             } else {
                 score = 'Deuce'
             }
-        }
+        } else if (this.player1.points >= 4 || this.player2.points >= 4) {
+            const [advantagePlayer, difference] = this.getAdvantage()
 
-        else if (this.player1.points >= 4 || this.player2.points >= 4) {
-            var minusResult = this.player1.points - this.player2.points;
-
-            // const [advantagePlayer, difference] = this.getAdvantage()
-
-            // method to compare who has higher score
-            // difference(player1Score, player2Score)
-            // e.g. difference(3, 4) = player2 has 1 point more
-            // if the score >= 2, then "win for player X"
-            // BUT essentially it kind of is the same logic as this existing block of code
-            if (minusResult === 1) score = "Advantage player1";
-            else if (minusResult === -1) score = "Advantage player2";
-
-            else if (minusResult >= 2) score = "Win for player1";
-            else score = "Win for player2";
-
-        }
-
-        else {
+            if (difference >= 2) {
+                score = `Win for ${advantagePlayer.name}`
+            } else {
+                score = `Advantage ${advantagePlayer.name}`
+            }
+        } else {
             const pointMapping = ['Love', 'Fifteen', 'Thirty', 'Forty']
             score = `${pointMapping[this.player1.points]}-${pointMapping[this.player2.points]}`
         }
