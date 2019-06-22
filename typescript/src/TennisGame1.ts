@@ -4,6 +4,7 @@ import { Player } from './Player';
 export class TennisGame1 implements TennisGame {
   private player1: Player;
   private player2: Player;
+  private scoreMapping = ['Love', 'Fifteen', 'Thirty', 'Forty']
 
   constructor(player1Name: string, player2Name: string) {
     this.player1 = new Player(player1Name);
@@ -19,52 +20,37 @@ export class TennisGame1 implements TennisGame {
   }
 
   getScore(): string {
-    let score: string = '';
-    let tempScore: number = 0;
-    if (this.player1.points === this.player2.points) {
-      switch (this.player1.points) {
-        case 0:
-          score = 'Love-All';
-          break;
-        case 1:
-          score = 'Fifteen-All';
-          break;
-        case 2:
-          score = 'Thirty-All';
-          break;
-        default:
-          score = 'Deuce';
-          break;
+    if (this.isEqualpoints()) {
+      return (this.player1.points < 3) ? `${this.pointsToText(this.player1.points)}-All` : 'Deuce'
+    } else if (this.hasAdvantage()) {
+      const [player, diffScore]: [Player, number] = this.advantageToPlayer();
+      const prefix: string = (diffScore >= 2) ? 'Win for' : 'Advantage'
 
-      }
+      return `${prefix} ${player.name}`
     }
-    else if (this.player1.points >= 4 || this.player2.points >= 4) {
-      const minusResult: number = this.player1.points - this.player2.points;
-      if (minusResult === 1) score = 'Advantage player1';
-      else if (minusResult === -1) score = 'Advantage player2';
-      else if (minusResult >= 2) score = 'Win for player1';
-      else score = 'Win for player2';
+
+    return `${this.pointsToText(this.player1.points)}-${this.pointsToText(this.player2.points)}`;
+  }
+
+  private pointsToText(score: number): string {
+    return this.scoreMapping[score]
+  }
+
+  private advantageToPlayer(): [Player, number] | null {
+    if (this.player1.points === this.player2.points) return null
+
+    if (this.player1.points > this.player2.points) {
+      return [ this.player1, (this.player1.points - this.player2.points) ]
+    } else {
+      return [ this.player2, (this.player2.points - this.player1.points) ]
     }
-    else {
-      for (let i = 1; i < 3; i++) {
-        if (i === 1) tempScore = this.player1.points;
-        else { score += '-'; tempScore = this.player2.points; }
-        switch (tempScore) {
-          case 0:
-            score += 'Love';
-            break;
-          case 1:
-            score += 'Fifteen';
-            break;
-          case 2:
-            score += 'Thirty';
-            break;
-          case 3:
-            score += 'Forty';
-            break;
-        }
-      }
-    }
-    return score;
+  }
+
+  private isEqualpoints(): boolean {
+    return this.player1.points === this.player2.points
+  }
+
+  private hasAdvantage(): boolean {
+    return this.player1.points >= 4 || this.player2.points >= 4
   }
 }
