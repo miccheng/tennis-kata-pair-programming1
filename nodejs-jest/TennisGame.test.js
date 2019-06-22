@@ -1,4 +1,5 @@
 import TennisGame1 from './TennisGame1'
+import TennisGame2 from './TennisGame2'
 import Player from './player'
 
 const allScores = [
@@ -42,7 +43,7 @@ const allScores = [
   [14, 16, "Win for player2"]
 ]
 
-describe('new game', () => {
+describe('Tennis Game 1', () => {
   test.each(allScores)(
     'Scores of %i, %i to result in %s',
     (player1Score, player2Score, expected) => {
@@ -63,3 +64,23 @@ describe('new game', () => {
   )
 })
 
+describe('Tennis Game 2', () => {
+  test.each(allScores)(
+    'Scores of %i, %i to result in %s',
+    (player1Score, player2Score, expected) => {
+      const player1 = new Player('player1')
+      const player2 = new Player('player2')
+
+      const game = new TennisGame2(player1, player2)
+
+      for(let i=0; i < player1Score; i++) {
+        game.wonPoint('player1')
+      }
+      for(let i=0; i < player2Score; i++) {
+        game.wonPoint('player2')
+      }
+
+      expect(game.getScore()).toEqual(expected);
+    },
+  )
+})
