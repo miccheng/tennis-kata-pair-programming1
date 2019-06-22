@@ -19,49 +19,37 @@ TennisGame1.prototype.playerWithName = function(playerName) {
 TennisGame1.prototype.getScore = function() {
     var score = "";
     var tempScore = 0;
+
     if (this.player1.points === this.player2.points) {
-        switch (this.player1.points) {
-            case 0:
-                score = "Love-All";
-                break;
-            case 1:
-                score = "Fifteen-All";
-                break;
-            case 2:
-                score = "Thirty-All";
-                break;
-            default:
-                score = "Deuce";
-                break;
+        const equalScores = ['Love-All', 'Fifteen-All', 'Thirty-All']
+        if (this.player1.points < 3) {
+            score = equalScores[this.player1.points]
+        } else {
+            score = 'Deuce'
         }
-    } else if (this.player1.points >= 4 || this.player2.points >= 4) {
+    }
+
+    else if (this.player1.points >= 4 || this.player2.points >= 4) {
         var minusResult = this.player1.points - this.player2.points;
+
+        // const [advantagePlayer, difference] = this.getAdvantage()
+
+        // method to compare who has higher score
+        // difference(player1Score, player2Score)
+        // e.g. difference(3, 4) = player2 has 1 point more
+        // if the score >= 2, then "win for player X"
+        // BUT essentially it kind of is the same logic as this existing block of code
         if (minusResult === 1) score = "Advantage player1";
         else if (minusResult === -1) score = "Advantage player2";
+
         else if (minusResult >= 2) score = "Win for player1";
         else score = "Win for player2";
-    } else {
-        for (var i = 1; i < 3; i++) {
-            if (i === 1) tempScore = this.player1.points;
-            else {
-                score += "-";
-                tempScore = this.player2.points;
-            }
-            switch (tempScore) {
-                case 0:
-                    score += "Love";
-                    break;
-                case 1:
-                    score += "Fifteen";
-                    break;
-                case 2:
-                    score += "Thirty";
-                    break;
-                case 3:
-                    score += "Forty";
-                    break;
-            }
-        }
+
+    }
+
+    else {
+        const pointMapping = ['Love', 'Fifteen', 'Thirty', 'Forty']
+        score = `${pointMapping[this.player1.points]}-${pointMapping[this.player2.points]}`
     }
     return score;
 };
